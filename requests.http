@@ -12,9 +12,10 @@ POST http://localhost:3000/api/plans
 Content-Type: application/json
 
 {
+  "id": 4,
   "title": "Премиум бокс",
   "description": "Эксклюзивные блюда",
-  "pricePerWeek": 5500,
+  "pricePerWeek": 183.33,
   "mealsPerWeek": 7,
   "persons": 2,
   "isActive": true
@@ -27,7 +28,7 @@ Content-Type: application/json
 {
   "title": "Семейный бокс+",
   "description": "Новое описание",
-  "pricePerWeek": 5200,
+  "pricePerWeek": 183.33,
   "mealsPerWeek": 6,
   "persons": 5,
   "isActive": false

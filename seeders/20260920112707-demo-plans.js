@@ -6,7 +6,7 @@ module.exports = {
       {
         title: "Семейный бокс",
         description: "Набор ужинов на 4 человек на 5 дней с простыми рецептами",
-        pricePerWeek: 4500.0,
+        pricePerWeek: 173.33,
         mealsPerWeek: 5,
         persons: 4,
         isActive: true,
@@ -18,7 +18,7 @@ module.exports = {
         title: "Фитнес & Протеин",
         description:
           "Сбалансированные блюда с высоким содержанием белка и подсчетом КБЖУ",
-        pricePerWeek: 3800.0,
+        pricePerWeek: 126.57,
         mealsPerWeek: 6,
         persons: 1,
         isActive: true,
@@ -29,7 +29,7 @@ module.exports = {
       {
         title: "Вегетарианский бокс",
         description: "Разнообразные блюда без мяса и птицы, богатые клетчаткой",
-        pricePerWeek: 3200.0,
+        pricePerWeek: 106.67,
         mealsPerWeek: 5,
         persons: 2,
         isActive: true,

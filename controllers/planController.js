@@ -1,6 +1,5 @@
 const { Plan } = require("../models");
 
-// GET /api/plans - получить все планы
 exports.getAllPlans = async (req, res) => {
   try {
     const plans = await Plan.findAll();
@@ -10,7 +9,6 @@ exports.getAllPlans = async (req, res) => {
   }
 };
 
-// GET /api/plans/:id - получить план по ID
 exports.getPlanById = async (req, res) => {
   try {
     const plan = await Plan.findByPk(req.params.id);
@@ -23,7 +21,6 @@ exports.getPlanById = async (req, res) => {
   }
 };
 
-// POST /api/plans - создать новый план
 exports.createPlan = async (req, res) => {
   try {
     const newPlan = await Plan.create(req.body);
@@ -33,7 +30,6 @@ exports.createPlan = async (req, res) => {
   }
 };
 
-// PUT /api/plans/:id - обновить план
 exports.updatePlan = async (req, res) => {
   try {
     const plan = await Plan.findByPk(req.params.id);
@@ -47,7 +43,6 @@ exports.updatePlan = async (req, res) => {
   }
 };
 
-// DELETE /api/plans/:id - удалить план
 exports.deletePlan = async (req, res) => {
   try {
     const plan = await Plan.findByPk(req.params.id);
