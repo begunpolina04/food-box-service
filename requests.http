@@ -36,3 +36,30 @@ Content-Type: application/json
 
 ### 6. 
 DELETE http://localhost:3000/api/plans/4
+
+
+
+### 7.
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "email": "user2@example.com",
+  "password": "password123"
+}
+
+### 8.
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+
+### 9.
+GET http://localhost:3000/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJ1c2VyMkBleGFtcGxlLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzkxMzc0OTE0LCJleHAiOjE3OTEzNzg1MTR9.jwfSUVpyg8mBDUUE6tdjJ4q5W1tKWKwzhKsfCnPfVlw
+### 10.
+GET http://localhost:3000/admin/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzkxMzc0OTYwLCJleHAiOjE3OTEzNzg1NjB9.oNq467GTX2aKg79MMpXs91_nAsQZNfJQKjUD5agG7O4

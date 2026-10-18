@@ -4,7 +4,6 @@ const authMiddleware = require("../middleware/auth");
 const isAdmin = require("../middleware/isAdmin");
 const { User } = require("../models");
 
-// GET /admin/users - список всех пользователей (только для админов)
 router.get("/users", authMiddleware, isAdmin, async (req, res) => {
   try {
     const users = await User.findAll({

@@ -4,7 +4,6 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
-      // связи (пока нет)
     }
   }
 
@@ -12,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       email: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allwNull: false,
         unique: true,
         validate: {
           isEmail: true,

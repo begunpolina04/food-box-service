@@ -3,7 +3,6 @@ const router = express.Router();
 const authMiddleware = require("../middleware/auth");
 const { User } = require("../models");
 
-// GET /profile - защищённый маршрут
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {
