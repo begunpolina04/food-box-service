@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import useLocalStorage from "../hooks/useLocalStorage";
+import PlanForm from "./PlanForm";
+import PlanCard from "./PlanCard";
 import "./PlanList.css";
 
 const initialPlans = [
@@ -8,19 +11,12 @@ const initialPlans = [
 
 export default function PlanList() {
   const [isLoading, setIsLoading] = useState(true);
-
-  const [plans, setPlans] = useState(() => {
-    const saved = localStorage.getItem("plans");
-    return saved ? JSON.parse(saved) : initialPlans;
-  });
-
-  const [title, setTitle] = useState("");
-  const [price, setPrice] = useState("");
-  const [persons, setPersons] = useState("1");
-
+  const [plans, setPlans] = useLocalStorage("plans", initialPlans);
   const [sortBy, setSortBy] = useState("default");
 
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1000);
@@ -28,78 +24,48 @@ export default function PlanList() {
   }, []);
 
   useEffect(() => {
-    if (isLoading) return;
-
-    const timeoutId = setTimeout(() => {
-      localStorage.setItem("plans", JSON.stringify(plans));
-    }, 500);
-
-    return () => clearTimeout(timeoutId);
-  }, [plans, isLoading]);
-
-  useEffect(() => {
     document.title = `Планы подписки (${plans.length})`;
   }, [plans]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!title.trim() || !price) return;
-
+  const handleSave = (formData) => {
     if (editingId !== null) {
       setPlans(
-        plans.map((p) =>
-          p.id === editingId
-            ? {
-                ...p,
-                title: title.trim(),
-                price: Number(price),
-                persons: Number(persons),
-              }
-            : p,
-        ),
+        plans.map((p) => (p.id === editingId ? { ...p, ...formData } : p)),
       );
       setEditingId(null);
     } else {
-      setPlans([
-        ...plans,
-        {
-          id: Date.now(),
-          title: title.trim(),
-          price: Number(price),
-          persons: Number(persons),
-          isActive: true,
-        },
-      ]);
+      setPlans([...plans, { id: Date.now(), ...formData, isActive: true }]);
     }
-    setTitle("");
-    setPrice("");
-    setPersons("1");
+    setIsFormOpen(false);
   };
 
   const handleDelete = (id) => setPlans(plans.filter((p) => p.id !== id));
+
   const handleEdit = (plan) => {
     setEditingId(plan.id);
-    setTitle(plan.title);
-    setPrice(plan.price);
-    setPersons(plan.persons.toString());
+    setIsFormOpen(true);
   };
+
   const handleCancel = () => {
     setEditingId(null);
-    setTitle("");
-    setPrice("");
-    setPersons("1");
+    setIsFormOpen(false);
   };
+
   const toggleActive = (id) =>
     setPlans(
       plans.map((p) => (p.id === id ? { ...p, isActive: !p.isActive } : p)),
     );
 
-  const sortedPlans = [...plans].sort((a, b) => {
-    if (sortBy === "priceAsc") return a.price - b.price;
-    if (sortBy === "priceDesc") return b.price - a.price;
-    if (sortBy === "name") return a.title.localeCompare(b.title);
-    return 0;
-  });
+  const processedPlans = [...plans]
+    .filter((p) => p.title.toLowerCase().includes(searchQuery.toLowerCase()))
+    .sort((a, b) => {
+      if (sortBy === "priceAsc") return a.price - b.price;
+      if (sortBy === "priceDesc") return b.price - a.price;
+      if (sortBy === "name") return a.title.localeCompare(b.title);
+      return 0;
+    });
+
+  const editingPlan = plans.find((p) => p.id === editingId) || null;
 
   if (isLoading) {
     return (
@@ -114,75 +80,47 @@ export default function PlanList() {
     <div className="plan-container">
       <h1 className="plan-title">Планы подписки</h1>
 
-      {/* Форма добавления */}
-      <form onSubmit={handleSubmit} className="plan-form">
-        <input
-          type="text"
-          placeholder="Название плана"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="plan-input"
-        />
-        <input
-          type="number"
-          placeholder="Цена (BYN)"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          className="plan-input"
-          style={{ flex: "0 0 100px" }}
-        />
-        <select
-          value={persons}
-          onChange={(e) => setPersons(e.target.value)}
-          className="plan-input"
-          style={{ flex: "0 0 120px" }}
-        >
-          <option value="1">1 чел.</option>
-          <option value="2">2 чел.</option>
-          <option value="4">4 чел.</option>
-        </select>
-        <button type="submit" className="btn btn-add">
-          {editingId ? "Сохранить" : "Добавить"}
-        </button>
-        {editingId && (
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="btn btn-cancel"
-          >
-            Отмена
-          </button>
-        )}
-      </form>
+      <button
+        className="btn btn-add"
+        onClick={() => {
+          setEditingId(null);
+          setIsFormOpen(true);
+        }}
+        style={{
+          width: "100%",
+          marginBottom: "20px",
+          padding: "15px",
+          fontSize: "16px",
+        }}
+      >
+        + Добавить новый план
+      </button>
 
-      {/* Панель инструментов: Сортировка + Статистика */}
       <div className="toolbar">
         <div className="sort-group">
-          <span className="sort-label">Сортировка:</span>
-          <button
-            onClick={() => setSortBy("default")}
-            className={`btn btn-sort ${sortBy === "default" ? "active" : ""}`}
+          <input
+            type="text"
+            placeholder="Поиск по названию..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="plan-input"
+            style={{ flex: "1", minWidth: "200px", padding: "8px 12px" }}
+          />
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="plan-input"
+            style={{
+              flex: "0 0 180px",
+              padding: "8px 12px",
+              cursor: "pointer",
+            }}
           >
-            По умолчанию
-          </button>
-          <button
-            onClick={() => setSortBy("priceAsc")}
-            className={`btn btn-sort ${sortBy === "priceAsc" ? "active" : ""}`}
-          >
-            Сначала дешевле
-          </button>
-          <button
-            onClick={() => setSortBy("priceDesc")}
-            className={`btn btn-sort ${sortBy === "priceDesc" ? "active" : ""}`}
-          >
-            Сначала дороже
-          </button>
-          <button
-            onClick={() => setSortBy("name")}
-            className={`btn btn-sort ${sortBy === "name" ? "active" : ""}`}
-          >
-            По алфавиту
-          </button>
+            <option value="default">По умолчанию</option>
+            <option value="priceAsc">Сначала дешевле</option>
+            <option value="priceDesc">Сначала дороже</option>
+            <option value="name">По алфавиту</option>
+          </select>
         </div>
         <div className="stats-inline">
           Всего: <strong>{plans.length}</strong> | Активных:{" "}
@@ -190,54 +128,30 @@ export default function PlanList() {
         </div>
       </div>
 
-      {/* Список планов */}
-      {sortedPlans.length === 0 ? (
-        <p className="empty-text">Планов пока нет. Добавьте первый!</p>
+      {processedPlans.length === 0 ? (
+        <p className="empty-text">
+          Планов не найдено. Попробуйте изменить запрос.
+        </p>
       ) : (
         <ul className="plans-list">
-          {sortedPlans.map((plan) => (
-            <li
+          {processedPlans.map((plan) => (
+            <PlanCard
               key={plan.id}
-              className={`plan-card ${!plan.isActive ? "inactive" : ""}`}
-            >
-              <div className="plan-info">
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
-                >
-                  <span className="plan-name">{plan.title}</span>
-                  <span
-                    className={`status-badge ${plan.isActive ? "status-active" : "status-inactive"}`}
-                  >
-                    {plan.isActive ? "Активен" : "Скрыт"}
-                  </span>
-                </div>
-                <span className="plan-price">
-                  {plan.price} BYN / нед. • на {plan.persons} чел.
-                </span>
-              </div>
-              <div className="plan-actions">
-                <button
-                  onClick={() => toggleActive(plan.id)}
-                  className="btn btn-icon"
-                >
-                  {plan.isActive ? "Скрыть" : "Включить"}
-                </button>
-                <button
-                  onClick={() => handleEdit(plan)}
-                  className="btn btn-icon"
-                >
-                  Изменить
-                </button>
-                <button
-                  onClick={() => handleDelete(plan.id)}
-                  className="btn btn-icon btn-danger"
-                >
-                  Удалить
-                </button>
-              </div>
-            </li>
+              plan={plan}
+              onToggle={toggleActive}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
           ))}
         </ul>
+      )}
+
+      {isFormOpen && (
+        <PlanForm
+          onSave={handleSave}
+          editingPlan={editingPlan}
+          onCancel={handleCancel}
+        />
       )}
     </div>
   );

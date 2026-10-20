@@ -1,3 +1,4 @@
+/* Общий фон страницы */
 body {
   background-color: #fff5ee;
   margin: 0;
@@ -5,7 +6,7 @@ body {
 }
 
 .plan-container {
-  max-width: 900px; /* Сделали чуть шире для дашборда */
+  max-width: 900px;
   margin: 40px auto;
   padding: 0 20px;
   color: #4a3b32;
@@ -20,19 +21,85 @@ body {
   letter-spacing: -0.5px;
 }
 
-/* Форма добавления */
-.plan-form {
+/* Форма добавления (модальная) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(74, 59, 50, 0.5);
+  backdrop-filter: blur(4px);
   display: flex;
-  gap: 15px;
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(210, 105, 30, 0.08);
-  margin-bottom: 20px;
+  justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
 }
 
+.modal-content {
+  background: #ffffff;
+  width: 100%;
+  max-width: 450px;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease-out;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #4a3b32;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #a9a9a9;
+  cursor: pointer;
+  transition: color 0.2s;
+  line-height: 1;
+}
+
+.btn-close:hover {
+  color: #ff7f50;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #8b4513;
+}
+
+.form-group .plan-input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+/* Поля ввода */
 .plan-input {
   flex: 1;
   min-width: 150px;
@@ -51,6 +118,7 @@ body {
   box-shadow: 0 0 0 3px rgba(255, 127, 80, 0.2);
 }
 
+/* Кнопки */
 .btn {
   padding: 12px 20px;
   border: none;
@@ -64,20 +132,18 @@ body {
   justify-content: center;
 }
 
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 .btn-add {
   background-color: #ff7f50;
   color: white;
+  border-radius: 12px;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(255, 99, 71, 0.2);
 }
 
-.btn-add:hover:not(:disabled) {
+.btn-add:hover {
   background-color: #ff6347;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(255, 99, 71, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(255, 99, 71, 0.3);
 }
 
 .btn-cancel {
@@ -89,7 +155,7 @@ body {
   background-color: #ffdab9;
 }
 
-/* Панель инструментов (Сортировка + Статистика) */
+/* Тулбар */
 .toolbar {
   display: flex;
   justify-content: space-between;
@@ -108,32 +174,7 @@ body {
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-}
-
-.sort-label {
-  font-weight: 600;
-  color: #a0522d;
-  font-size: 14px;
-  margin-right: 5px;
-}
-
-.btn-sort {
-  padding: 6px 14px;
-  font-size: 13px;
-  background-color: #fff5ee;
-  color: #d2691e;
-  border: 1px solid transparent;
-  border-radius: 20px;
-}
-
-.btn-sort.active {
-  background-color: #ff7f50;
-  color: white;
-}
-
-.btn-sort:hover:not(.active) {
-  border-color: #ffe4d6;
-  background-color: #ffe4d6;
+  flex: 1;
 }
 
 .stats-inline {
@@ -211,7 +252,6 @@ body {
   background-color: #fff0f0;
   color: #cd5c5c;
 }
-
 .btn-danger:hover {
   background-color: #ffe4e4;
 }
@@ -229,7 +269,6 @@ body {
   background-color: #ffe4d6;
   color: #d2691e;
 }
-
 .status-inactive {
   background-color: #f5f5f5;
   color: #a9a9a9;
@@ -270,6 +309,24 @@ body {
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
