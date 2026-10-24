@@ -1,0 +1,86 @@
+<%- include('partials/header', { user: { name: 'Гость', role: 'guest' } }) %>
+
+<div class="auth-container" style="height: auto; padding: 40px 0;">
+  <div class="auth-card">
+    <h2>Вход в систему</h2>
+    
+    <% if (error) { %>
+      <div class="auth-error"><%= error %></div>
+    <% } %>
+
+    <form action="/login" method="POST" class="auth-form">
+      <input 
+        type="email" 
+        name="email" 
+        id="loginEmail"
+        placeholder="Email" 
+        class="plan-input" 
+        required 
+        maxlength="100"
+      >
+      <input 
+        type="password" 
+        name="password" 
+        id="loginPass"
+        placeholder="Пароль" 
+        class="plan-input" 
+        required 
+        maxlength="50"
+      >
+      
+      <button type="submit" id="loginBtn" class="btn btn-add" style="width: 100%; opacity: 0.5; cursor: not-allowed;" disabled>
+        Войти
+      </button>
+    </form>
+
+    <p style="text-align: center; margin-top: 15px;">
+      Нет аккаунта? <a href="/register" style="color: #FF7F50;">Зарегистрироваться</a>
+    </p>
+  </div>
+</div>
+
+<script>
+  const loginEmail = document.getElementById('loginEmail');
+  const loginPass = document.getElementById('loginPass');
+  const loginBtn = document.getElementById('loginBtn');
+
+  function validateField(input, condition) {
+    if (input.value.length === 0) {
+      input.style.borderColor = '#FFE4D6';
+      input.style.boxShadow = 'none';
+      return false;
+    } else if (condition) {
+      input.style.borderColor = '#4CAF50';
+      input.style.boxShadow = '0 0 0 3px rgba(76, 175, 80, 0.2)';
+      return true;
+    } else {
+      input.style.borderColor = '#CD5C5C';
+      input.style.boxShadow = '0 0 0 3px rgba(205, 92, 92, 0.2)';
+      return false;
+    }
+  }
+
+  function checkLoginForm() {
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/;
+    const isEmailValid = emailRegex.test(loginEmail.value);
+    const isPassValid = loginPass.value.length > 0;
+
+    validateField(loginEmail, isEmailValid);
+    validateField(loginPass, isPassValid);
+
+    if (isEmailValid && isPassValid) {
+      loginBtn.disabled = false;
+      loginBtn.style.opacity = '1';
+      loginBtn.style.cursor = 'pointer';
+    } else {
+      loginBtn.disabled = true;
+      loginBtn.style.opacity = '0.5';
+      loginBtn.style.cursor = 'not-allowed';
+    }
+  }
+
+  loginEmail.addEventListener('input', checkLoginForm);
+  loginPass.addEventListener('input', checkLoginForm);
+</script>
+
+<%- include('partials/footer') %>

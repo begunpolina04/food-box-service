@@ -1,0 +1,52 @@
+<%- include('partials/header', { user: user }) %>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; margin-top: 20px; flex-wrap: wrap; gap: 10px;">
+  <h1 class="plan-title" style="margin: 0; font-size: 28px;">Активные подписки клиентов</h1>
+  <a href="/" class="btn btn-add" style="text-decoration: none; padding: 10px 15px;">← Вернуться к планам</a>
+</div>
+
+<div style="background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(210, 105, 30, 0.05); overflow-x: auto;">
+  <table style="width: 100%; border-collapse: collapse; text-align: left;">
+    <thead>
+      <tr style="border-bottom: 2px solid #FFE4D6; color: #8B4513;">
+        <th style="padding: 12px;">Клиент</th>
+        <th style="padding: 12px;">Email</th>
+        <th style="padding: 12px;">План</th>
+        <th style="padding: 12px;">Стоимость</th>
+        <th style="padding: 12px;">Дата оформления</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (subscriptions.length === 0) { %>
+        <tr><td colspan="5" style="text-align: center; padding: 20px;">Активных подписок пока нет</td></tr>
+      <% } %>
+      
+      <% subscriptions.forEach(sub => { %>
+        <!-- Проверяем, что и юзер, и план существуют (не удалены) -->
+        <% if (sub.User && sub.Plan) { %>
+          <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 12px; font-weight: 600; color: #4A3B32;">
+              <%= sub.User.name %>
+            </td>
+            <td style="padding: 12px; color: #666;">
+              <%= sub.User.email %>
+            </td>
+            <td style="padding: 12px;">
+              <span class="status-badge" style="background: #FFF5EE; color: #D2691E; font-size: 14px;">
+                <%= sub.Plan.title %>
+              </span>
+            </td>
+            <td style="padding: 12px; font-weight: 600; color: #FF7F50;">
+              <%= sub.Plan.price %> BYN / нед.
+            </td>
+            <td style="padding: 12px; font-size: 13px; color: #666;">
+              <%= sub.createdAt.toLocaleString('ru-RU') %>
+            </td>
+          </tr>
+        <% } %>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('partials/footer') %>

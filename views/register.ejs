@@ -1,0 +1,111 @@
+<%- include('partials/header', { user: { name: 'Гость', role: 'guest' } }) %>
+
+<div class="auth-container" style="height: auto; padding: 40px 0;">
+  <div class="auth-card">
+    <h2>Регистрация</h2>
+    
+    <% if (error) { %>
+      <div class="auth-error"><%= error %></div>
+    <% } %>
+
+    <form action="/register" method="POST" class="auth-form" id="regForm">
+      <input 
+        type="text" 
+        name="name" 
+        id="nameInput"
+        placeholder="Ваше имя" 
+        class="plan-input" 
+        required 
+        minlength="2" 
+        maxlength="50"
+      >
+      
+      <input 
+        type="email" 
+        name="email" 
+        id="emailInput"
+        placeholder="Email (например, user@mail.ru)" 
+        class="plan-input" 
+        required 
+        maxlength="100"
+        pattern="[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}"
+        title="Введите корректный email с доменом (например, user@mail.ru)"
+      >
+      
+      <input 
+        type="password" 
+        name="password" 
+        id="passInput"
+        placeholder="Пароль (мин. 6 символов)" 
+        class="plan-input" 
+        required 
+        minlength="6" 
+        maxlength="50"
+      >
+      
+      <!-- Кнопка изначально disabled (неактивна) -->
+      <button type="submit" id="submitBtn" class="btn btn-add" style="width: 100%; opacity: 0.5; cursor: not-allowed;" disabled>
+        Зарегистрироваться
+      </button>
+    </form>
+
+    <p style="text-align: center; margin-top: 15px;">
+      Уже есть аккаунт? <a href="/login" style="color: #FF7F50;">Войти</a>
+    </p>
+  </div>
+</div>
+
+<script>
+  const nameInput = document.getElementById('nameInput');
+  const emailInput = document.getElementById('emailInput');
+  const passInput = document.getElementById('passInput');
+  const submitBtn = document.getElementById('submitBtn');
+
+  // Функция проверки одного поля (возвращает true/false и красит рамку)
+  function validateField(input, condition) {
+    if (input.value.length === 0) {
+      input.style.borderColor = '#FFE4D6';
+      input.style.boxShadow = 'none';
+      return false;
+    } else if (condition) {
+      input.style.borderColor = '#4CAF50'; // Зеленый
+      input.style.boxShadow = '0 0 0 3px rgba(76, 175, 80, 0.2)';
+      return true;
+    } else {
+      input.style.borderColor = '#CD5C5C'; // Красный
+      input.style.boxShadow = '0 0 0 3px rgba(205, 92, 92, 0.2)';
+      return false;
+    }
+  }
+
+  // Главная функция, которая проверяет все поля и включает/выключает кнопку
+  function checkForm() {
+    const isNameValid = nameInput.value.trim().length >= 2 && nameInput.value.length <= 50;
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/;
+    const isEmailValid = emailRegex.test(emailInput.value);
+    const isPassValid = passInput.value.length >= 6 && passInput.value.length <= 50;
+
+    // Красим рамки
+    validateField(nameInput, isNameValid);
+    validateField(emailInput, isEmailValid);
+    validateField(passInput, isPassValid);
+
+    // Если ВСЕ поля валидны — включаем кнопку
+    if (isNameValid && isEmailValid && isPassValid) {
+      submitBtn.disabled = false;
+      submitBtn.style.opacity = '1';
+      submitBtn.style.cursor = 'pointer';
+    } else {
+      submitBtn.disabled = true;
+      submitBtn.style.opacity = '0.5';
+      submitBtn.style.cursor = 'not-allowed';
+    }
+  }
+
+  // Вызываем проверку при каждом вводе символа
+  nameInput.addEventListener('input', checkForm);
+  emailInput.addEventListener('input', checkForm);
+  passInput.addEventListener('input', checkForm);
+</script>
+
+<%- include('partials/footer') %>

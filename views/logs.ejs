@@ -1,0 +1,45 @@
+<%- include('partials/header', { user: user }) %>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; margin-top: 20px; flex-wrap: wrap; gap: 10px;">
+  <h1 class="plan-title" style="margin: 0; font-size: 28px;">Журнал действий (Логи)</h1>
+  <a href="/" class="btn btn-add" style="text-decoration: none; padding: 10px 15px;">← Вернуться к планам</a>
+</div>
+
+<div style="background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(210, 105, 30, 0.05); overflow-x: auto;">
+  <table style="width: 100%; border-collapse: collapse; text-align: left;">
+    <thead>
+      <tr style="border-bottom: 2px solid #FFE4D6; color: #8B4513;">
+        <th style="padding: 12px;">Дата</th>
+        <th style="padding: 12px;">Пользователь</th>
+        <th style="padding: 12px;">Действие</th>
+        <th style="padding: 12px;">Детали</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (logs.length === 0) { %>
+        <tr><td colspan="4" style="text-align: center; padding: 20px;">Логов пока нет</td></tr>
+      <% } %>
+      
+      <% logs.forEach(log => { %>
+        <tr style="border-bottom: 1px solid #f0f0f0;">
+          <td style="padding: 12px; font-size: 13px; color: #666;">
+            <%= log.createdAt.toLocaleString('ru-RU') %>
+          </td>
+          <td style="padding: 12px; font-weight: 600;">
+            <%= log.User ? log.User.name : 'Гость' %>
+          </td>
+          <td style="padding: 12px;">
+            <span class="status-badge" style="background: #FFF5EE; color: #D2691E;">
+              <%= log.action %>
+            </span>
+          </td>
+          <td style="padding: 12px; color: #4A3B32;">
+            <%= log.details %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('partials/footer') %>
